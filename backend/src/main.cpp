@@ -53,7 +53,9 @@ int main() {
     std::cout << "  MediCore: Smart Hospital Management System (C++ DSA)" << std::endl;
     std::cout << "========================================================" << std::endl;
 
-    std::string dbFile = "data/hospital.db";
+    const char* envDbPath = std::getenv("DATABASE_PATH");
+    std::string dbFile = (envDbPath && std::string(envDbPath).length() > 0) ? std::string(envDbPath) : "data/hospital.db";
+    
     auto db = std::make_shared<medicore::Database>(dbFile);
     auto service = std::make_shared<medicore::HospitalService>(db);
 
@@ -497,8 +499,18 @@ int main() {
         }
     });
 
-    std::cout << "[MediCore C++] Server listening on http://localhost:8080" << std::endl;
-    app.port(8080).multithreaded().run();
+    uint16_t port = 8080;
+    const char* envPort = std::getenv("PORT");
+    if (envPort && std::string(envPort).length() > 0) {
+        try {
+            port = static_cast<uint16_t>(std::stoi(envPort));
+        } catch (...) {
+            port = 8080;
+        }
+    }
+
+    std::cout << "[MediCore C++] Server listening on http://0.0.0.0:" << port << " (Database: " << dbFile << ")" << std::endl;
+    app.bindaddr("0.0.0.0").port(port).multithreaded().run();
 
     return 0;
 }

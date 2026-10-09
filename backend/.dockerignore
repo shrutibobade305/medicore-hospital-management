@@ -1,0 +1,8 @@
+build/
+.git/
+.vscode/
+.vs/
+*.db
+*.db-journal
+*.o
+*.obj
