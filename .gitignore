@@ -1,0 +1,22 @@
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# C++ Build Artefacts
+backend/build/
+*.exe
+*.obj
+*.o
+*.a
+*.pdb
+
+# Local Database & runtime logs
+*.log
+data/hospital.db-journal
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
