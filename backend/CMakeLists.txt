@@ -41,31 +41,34 @@ else()
     target_link_libraries(medicore_server PRIVATE sqlite3 pthread dl)
 endif()
 
-# 2. Automated DSA Test Suite Executable
-add_executable(test_dsa
-    tests/test_dsa.cpp
-    src/dsa/patient_hash_table.cpp
-    src/dsa/visit_linked_list.cpp
-    src/dsa/appointment_queue.cpp
-    src/dsa/emergency_heap.cpp
-    src/dsa/doctor_bst.cpp
-    src/dsa/undo_stack.cpp
-    src/dsa/hospital_graph.cpp
-    src/dsa/dsa_algorithms.cpp
-)
+# 2. Automated Test Suite Executables (Optional for production builds)
+option(BUILD_TESTS "Build test suite executables" OFF)
 
-# 3. Automated Backend & Database Integration Test Suite Executable
-add_executable(test_backend
-    tests/test_backend.cpp
-    ${MEDICORE_CORE_SRCS}
-)
+if (BUILD_TESTS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_dsa.cpp")
+    add_executable(test_dsa
+        tests/test_dsa.cpp
+        src/dsa/patient_hash_table.cpp
+        src/dsa/visit_linked_list.cpp
+        src/dsa/appointment_queue.cpp
+        src/dsa/emergency_heap.cpp
+        src/dsa/doctor_bst.cpp
+        src/dsa/undo_stack.cpp
+        src/dsa/hospital_graph.cpp
+        src/dsa/dsa_algorithms.cpp
+    )
 
-if (WIN32)
-    target_link_libraries(test_backend PRIVATE sqlite3 ws2_32 mswsock)
-else()
-    target_link_libraries(test_backend PRIVATE sqlite3 pthread dl)
+    add_executable(test_backend
+        tests/test_backend.cpp
+        ${MEDICORE_CORE_SRCS}
+    )
+
+    if (WIN32)
+        target_link_libraries(test_backend PRIVATE sqlite3 ws2_32 mswsock)
+    else()
+        target_link_libraries(test_backend PRIVATE sqlite3 pthread dl)
+    endif()
+
+    enable_testing()
+    add_test(NAME DSASuite COMMAND test_dsa)
+    add_test(NAME BackendSuite COMMAND test_backend)
 endif()
-
-enable_testing()
-add_test(NAME DSASuite COMMAND test_dsa)
-add_test(NAME BackendSuite COMMAND test_backend)

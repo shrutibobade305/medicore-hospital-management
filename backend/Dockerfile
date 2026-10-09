@@ -22,7 +22,6 @@ WORKDIR /app
 COPY CMakeLists.txt ./
 COPY include/ ./include/
 COPY src/ ./src/
-COPY tests/ ./tests/
 
 # Compile the medicore_server executable using CMake in Release mode
 RUN mkdir -p build && cd build && \
